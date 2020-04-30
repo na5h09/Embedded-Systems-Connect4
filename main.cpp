@@ -96,7 +96,7 @@ void PortF_Init(void){
 	GPIO_PORTF_DEN_R |= 0x0E;
 }
 
-sprite_t bill={60,9,SmallEnemy20pointB,alive};
+
 sprite_t me={52, 50,PlayerShip0, alive};
 
 uint32_t time = 0;
@@ -106,15 +106,26 @@ void background(void){
  // if(bill.life == alive){
    // bill.y++;
   //}
-  if(bill.y>155){
-    bill.life = dead;
-  }
+  
 	me.x = my.Distance();
-	//ST7735_FillRect(0,40,100,10, 0x0000);
+	
 	
 }
 void clock(void){
   time++;
+}
+
+int xValue;
+
+void drawMe(void){
+	
+	if(xValue != me.x){
+	ST7735_FillRect(xValue,me.y - 10,10,10, 0x0000);
+		//xValue = me.x;
+	}
+	ST7735_DrawBitmap(me.x, me.y, me.image, 10,10);
+	xValue = me.x;
+	
 }
 int main(void){
 	DisableInterrupts();
@@ -128,7 +139,8 @@ int main(void){
   Timer0_Init(&background,1600000); // 50 Hz
   Timer1_Init(&clock,80000000); // 1 Hz
   EnableInterrupts();
-		ST7735_DrawBitmap(10,160,Grid,100,100);
+		ST7735_DrawBitmap(5,160,grid,115,100);
+		xValue = me.x;
 //  ST7735_DrawBitmap(10, 151, Bunker0, 18,5);
 //	ST7735_DrawBitmap(40, 151, Bunker0, 18,5);
 //	ST7735_DrawBitmap(70, 151, Bunker0, 18,5);
@@ -140,13 +152,14 @@ int main(void){
 //  ST7735_DrawBitmap(40, 9, SmallEnemy20pointA, 16,10);
 //  ST7735_DrawBitmap(80, 9, SmallEnemy30pointA, 16,10);
 //  ST7735_DrawBitmap(100, 9, SmallEnemy30pointB, 16,10);
-  while(bill.life == alive){
+  while(me.x >0){
     while(flag==0){};
     flag = 0;	
 		
-		ST7735_DrawBitmap(5,160,Grid,115,100);
+		//ST7735_DrawBitmap(5,160,Grid,115,100);
    // ST7735_DrawBitmap(me.x,me.y,bill.image,16,10);
-	  ST7735_DrawBitmap(me.x, me.y, me.image, 10,10); // player ship middle bottom
+	//  ST7735_DrawBitmap(me.x, me.y, me.image, 10,10); // player ship middle bottom
+			drawMe();
 		
 
   }
@@ -175,7 +188,7 @@ int main(void){
 void SysTick_Handler(void){ // every sample
     //*** students write this ******
 // should call ADC_In() and Sensor.Save
-  //GPIO_PORTF_DATA_R ^= 0x0E;		//toggle LED heartbeat
+  GPIO_PORTF_DATA_R ^= 0x0E;		//toggle LED heartbeat
   my.Save(ADC_In());
 	
 }
