@@ -60,6 +60,7 @@
 #include "UART.h"
 #include "Timer0.h"
 #include "Timer1.h"
+#include "Sound.h"
 
 
 SlidePot my(1500,0);
@@ -96,8 +97,14 @@ void PortF_Init(void){
 	GPIO_PORTF_DEN_R |= 0x0E;
 }
 
+void PortE_Init(void){
+	SYSCTL_RCGCGPIO_R |= 0x10; //Port E clock on
+	volatile int dumbass;
+	GPIO_PORTE_DIR_R &= 0xFC; //PE0 & PE1 IN
+	GPIO_PORTE_DEN_R |= 0x03;//
+}
 
-sprite_t me={52, 50,PlayerShip0, alive};
+sprite_t me={52, 50,arrowPointer , alive};
 
 uint32_t time = 0;
 volatile uint32_t flag;
@@ -127,18 +134,73 @@ void drawMe(void){
 	xValue = me.x;
 	
 }
+
+bool spanishFlag = false;
+void IntroScreen(void){
+	ST7735_OutString("ENGLISH PE0 BUTTON\nSPANISH PE1 BUTTON");
+	int PE0 = 0;
+	int PE1 = 1;
+	while(1){
+		PE0 = GPIO_PORTE_DATA_R &= 0x01;
+		PE1 = GPIO_PORTE_DATA_R &= 0x02;
+		
+		if(PE0){
+			ST7735_FillScreen(0); //clear screen
+			PE0= 7999999;
+		  ST7735_OutString("ENGLISH\n");
+			while(PE0 > 0){
+				PE0--;
+			}
+			ST7735_FillScreen(0); //clear screen
+				break;
+		}
+		if(PE1){
+			ST7735_FillScreen(0); //clear screen
+		  PE1= 7999999;
+			ST7735_OutString("SPANISH\n");
+			spanishFlag = true;
+			while(PE1 > 0){
+				PE1--;
+			}
+			ST7735_FillScreen(0); //clear screen
+			break;
+		}
+			
+		
+		
+	}
+	PE0= 79999999;
+		if(spanishFlag){
+			ST7735_OutString("CONECTAR CUATRO");
+		}
+		else{
+			ST7735_OutString("CONNECT FOUR");
+		}
+		while(PE0 > 0){
+			PE0--;
+			
+		}
+		ST7735_FillScreen(0); //clear screen
+
+}
 int main(void){
+
+	
+	
+	
 	DisableInterrupts();
   PLL_Init(Bus80MHz);       // Bus clock is 80 MHz 
 	SysTick_Init(8000000);	//sample at 10Hz or 0.1s
   ST7735_InitR(INITR_REDTAB); 
   ADC_Init();        // turn on ADC, PD2, set channel to 5
   PortF_Init();
+	PortE_Init();
   Random_Init(1);
   Output_Init();
   Timer0_Init(&background,1600000); // 50 Hz
   Timer1_Init(&clock,80000000); // 1 Hz
   EnableInterrupts();
+	IntroScreen();
 		ST7735_DrawBitmap(5,160,grid,115,100);
 		xValue = me.x;
 //  ST7735_DrawBitmap(10, 151, Bunker0, 18,5);
@@ -190,6 +252,7 @@ void SysTick_Handler(void){ // every sample
 // should call ADC_In() and Sensor.Save
   GPIO_PORTF_DATA_R ^= 0x0E;		//toggle LED heartbeat
   my.Save(ADC_In());
+	
 	
 }
 

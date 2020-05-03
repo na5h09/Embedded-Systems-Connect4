@@ -79,7 +79,7 @@ void SlidePot::Save(uint32_t n){
 }
 uint32_t SlidePot::Convert(uint32_t n){
   // lab 8
-  	return 10+ (n/820)*20 ; 
+  	return 5+ (n/585)*17 ; 
 
 }
 
@@ -105,4 +105,7 @@ uint32_t SlidePot::Distance(void){  // return distance value (0 to 2000), 0.001c
   return distance; // replace this with solution
 }
 
+uint32_t SlidePot::currentColumn(void){ //added this function so we can know what column we are on
+	return (data/585)*17;
+}
 
