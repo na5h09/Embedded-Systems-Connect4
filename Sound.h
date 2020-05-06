@@ -10,7 +10,7 @@
 
 void Sound_Init(void);
 void Sound_Play(const uint8_t *pt, uint32_t count);
-void Sound_Shoot(void);
+void Sound_DropToken(void);
 void Sound_Killed(void);
 void Sound_Explosion(void);
 

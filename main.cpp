@@ -70,15 +70,57 @@ extern "C" void EnableInterrupts(void);
 extern "C" void SysTick_Handler(void);
 
 // Creating a struct for the Sprite.
-typedef enum {dead,alive} status_t;
-struct sprite{
-  uint32_t x;      // x coordinate
-  uint32_t y;      // y coordinate
-  const unsigned short *image; // ptr->image
-  status_t life;            // dead/alive
-};          
+struct Node{
+	bool filled;
+	uint32_t x;
+	uint32_t y;
+	uint16_t color; //0 is none, 0xCA47 is blue, 0x20FD is red
+};
+typedef struct Node Gridspace;
+Gridspace Grid[7][6];
+uint16_t blue_c = 0xCA47;
+uint16_t red_c = 0x20FD;
 
-typedef struct sprite sprite_t;
+class token{
+	private:
+		uint32_t x;      // x coordinate
+		uint32_t prevX;
+		uint32_t y;      // y coordinate
+		uint32_t col;
+		const unsigned short *image; // ptr->image
+	
+	public:
+		token(){
+				x = 0;
+		}
+		
+		void Init(uint32_t x1, uint32_t y1, const unsigned short *p) {
+				x = x1; y = y1; image = p;
+				prevX = x; 
+		}
+		
+		void changeDistance(uint32_t value) {
+			x = value;
+		}
+		
+		void currentCol(uint32_t value) {
+			col = value;
+		}
+		uint32_t getCol() {
+			return col;
+		}
+		
+		void drawMe(void){
+			if(prevX != x){
+				ST7735_FillRect(prevX,y - 10,10,11,0x0000);
+			}
+			ST7735_DrawBitmap(x, y, image, 10,10);
+			prevX = x;
+	
+		}
+		
+			
+};          
 
 void SysTick_Init(unsigned long period){
   //*** students write this ******
@@ -104,35 +146,100 @@ void PortE_Init(void){
 	GPIO_PORTE_DEN_R |= 0x03;//
 }
 
-sprite_t me={52, 50,arrowPointer , alive};
+bool tokenSelect;
+token blue;
+void GameInit(){
+	blue.Init(100, 55, blueChip);
+	for(int i = 0; i < 6; i++) {
+		for(int j = 0; j < 5; j++) {
+			Grid[i][j].filled = false;
+			Grid[i][j].color = 0;
+			Grid[i][j].x = (16*i) + 7;
+			Grid[i][j].y = (16*i) + 61;
+		}
+	}
+}
+
+void GameDraw() {
+	blue.drawMe();
+	for(int i = 0; i < 6; i++) {
+		for(int j = 0; j < 5; j++) {
+			if(Grid[i][j].filled == true) {
+				ST7735_FillRect(Grid[i][j].x, Grid[i][j].y, 5, 5, Grid[i][j].color);
+			}
+		}
+	}
+}	
+
 
 uint32_t time = 0;
-volatile uint32_t flag;
+volatile uint32_t flag; //different flag conditions
+bool playerWin = false;
+bool compWin = false;
+bool drawFlag = false;
+uint32_t grid_count = 0;
+void placeToken(uint32_t column, uint16_t tok_color) { //places token in column
+	for(int i = 5; i >=0; i--) {
+			if(Grid[column][i].filled == false){
+				Grid[column][i].filled = true;
+				Grid[column][i].color = tok_color;
+				grid_count++;
+				return;
+			}
+	}
+}
+
+bool GameCheck(uint16_t color_p){ //checks for winnner
+	for( int i = 6; i >= 0; i-- ) {
+		for( int j = 5; j >= 1; j-- ) {
+			
+			if(Grid[i][j].color == color_p &&	Grid[i-1][j-1].color == color_p &&	Grid[i-2][j-2].color == color_p &&	Grid[i-3][j-3].color == color_p )	{
+				return true;
+			}
+			
+
+			if(Grid[i][j].color == color_p && Grid[i][j-1].color == color_p &&	Grid[i][j-2].color == color_p && Grid[i][j-3].color == color_p )	{
+				return true;
+			}
+					
+			if(Grid[i][j].color == color_p && Grid[i-1][j].color == color_p && Grid[i-2][j].color == color_p && Grid[i-3][j].color == color_p )	{	
+				return true;
+			}
+					
+			if(Grid[i][j].color == color_p && Grid[i-1][j+1].color == color_p && Grid[i-2][j+2].color == color_p &&	Grid[i-3][j+3].color == color_p )	{
+				return true;
+			}
+						
+			if ( Grid[i][j].color == color_p && Grid[i][j+1].color == color_p && Grid[i][j+2].color == color_p && Grid[i][j+3].color == color_p )	{
+				return true;
+			}
+		}
+		
+	}
+	return false;
+}
+
 void background(void){
   flag = 1; // semaphore
- // if(bill.life == alive){
-   // bill.y++;
-  //}
-  
-	me.x = my.Distance();
-	
-	
-}
-void clock(void){
-  time++;
-}
 
-int xValue;
-
-void drawMe(void){
-	
-	if(xValue != me.x){
-	ST7735_FillRect(xValue,me.y - 10,10,10, 0x0000);
-		//xValue = me.x;
+	blue.changeDistance(my.Distance());		//continue to change the distance of player token
+	blue.currentCol(my.currentColumn());	//make sure to add column value
+	if(tokenSelect == true) {							//if PE0 was pressed place token in that column and check to see if player won
+		placeToken(blue.getCol(), blue_c);
+		playerWin = GameCheck(blue_c);
 	}
-	ST7735_DrawBitmap(me.x, me.y, me.image, 10,10);
-	xValue = me.x;
-	
+	if(grid_count == 42 && playerWin == false) {	//if player didn't win and the board is full game is draw
+		drawFlag = true;
+	}
+}
+
+void ComputerPlay() {
+	uint32_t c_col =(Random32()>>24)%7;
+	while(Grid[c_col][0].filled == true) {
+		c_col =(Random32()>>24)%7;
+	}
+	placeToken(c_col, red_c);
+	compWin = GameCheck(red_c);
 }
 
 bool spanishFlag = false;
@@ -197,36 +304,38 @@ int main(void){
 	PortE_Init();
   Random_Init(1);
   Output_Init();
-  Timer0_Init(&background,1600000); // 50 Hz
-  Timer1_Init(&clock,80000000); // 1 Hz
+	Sound_Init();
+  Timer1_Init(&background,1600000); // 50 Hz
+  //Timer1_Init(&clock,80000000); // 1 Hz
   EnableInterrupts();
-	IntroScreen();
+
+  while(1){
+		IntroScreen(); //so it can restart once the game is over
 		ST7735_DrawBitmap(5,160,grid,115,100);
-		xValue = me.x;
-//  ST7735_DrawBitmap(10, 151, Bunker0, 18,5);
-//	ST7735_DrawBitmap(40, 151, Bunker0, 18,5);
-//	ST7735_DrawBitmap(70, 151, Bunker0, 18,5);
-//	ST7735_DrawBitmap(100, 151, Bunker0, 18,5);
-	
-	
-//  ST7735_DrawBitmap(0, 9, SmallEnemy10pointA, 16,10);
-//  ST7735_DrawBitmap(20,9, SmallEnemy10pointB, 16,10);
-//  ST7735_DrawBitmap(40, 9, SmallEnemy20pointA, 16,10);
-//  ST7735_DrawBitmap(80, 9, SmallEnemy30pointA, 16,10);
-//  ST7735_DrawBitmap(100, 9, SmallEnemy30pointB, 16,10);
-  while(me.x >0){
-    while(flag==0){};
-    flag = 0;	
-		
-		//ST7735_DrawBitmap(5,160,Grid,115,100);
-   // ST7735_DrawBitmap(me.x,me.y,bill.image,16,10);
-	//  ST7735_DrawBitmap(me.x, me.y, me.image, 10,10); // player ship middle bottom
-			drawMe();
-		
+		GameInit();
+		while(playerWin == false || compWin == false || drawFlag == false) { //play while no one has won or drawn
+			while(flag==0){};		//semaphore
+			flag = 0;	
+			if(tokenSelect == true) { //if PE0 was pressed draw game and produce sound
+				GameDraw();
+				Sound_DropToken();
+				if(playerWin == true || drawFlag == true){	//if the player wins or there is a draw continue to ending screen
+				} else {								//otherwise disable interrupts while the computer plays its turn
+					DisableInterrupts();
+					ComputerPlay();
+					EnableInterrupts();
+				}
+			}
+			GameDraw();							//still continue to draw the game
+		}
+		//write function for ending screen
+		playerWin = false;
+		drawFlag = false;
+		compWin = false;
 
   }
 
-  ST7735_FillScreen(0x0000);            // set screen to black
+  /*ST7735_FillScreen(0x0000);            // set screen to black
   ST7735_SetCursor(1, 1);
   ST7735_OutString((char*)"GAME OVER");
   ST7735_SetCursor(1, 2);
@@ -241,7 +350,7 @@ int main(void){
     flag = 0;
     ST7735_SetCursor(2, 4);
     ST7735_OutUDec(time);
-  }
+  }*/
 
 }
 
@@ -252,6 +361,7 @@ void SysTick_Handler(void){ // every sample
 // should call ADC_In() and Sensor.Save
   GPIO_PORTF_DATA_R ^= 0x0E;		//toggle LED heartbeat
   my.Save(ADC_In());
+	tokenSelect = (GPIO_PORTE_DATA_R & 0x01);
 	
 	
 }
