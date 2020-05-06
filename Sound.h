@@ -19,6 +19,7 @@ void Sound_Fastinvader2(void);
 void Sound_Fastinvader3(void);
 void Sound_Fastinvader4(void);
 void Sound_Highpitch(void);
+void congratsScreenSong(void);
 
 #endif
 

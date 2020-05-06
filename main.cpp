@@ -64,6 +64,7 @@
 
 
 SlidePot my(1500,0);
+bool spanishFlag = false;
 
 extern "C" void DisableInterrupts(void);
 extern "C" void EnableInterrupts(void);
@@ -172,11 +173,20 @@ void GameInit(){
 
 void GameDraw() {
 	ST7735_SetCursor(0, 0);
+	if(spanishFlag ){
+	ST7735_OutString("PUNTACION JUGADOR: ");
+	ST7735_OutUDec(Player_Score);
+	ST7735_SetCursor(0, 1);
+	ST7735_OutString("PUNTUACION COMPUTADORA: ");
+	ST7735_OutUDec(Comp_Score);	
+	}
+	else{
 	ST7735_OutString("Player Score: ");
 	ST7735_OutUDec(Player_Score);
 	ST7735_SetCursor(0, 1);
 	ST7735_OutString("Computer Score: ");
 	ST7735_OutUDec(Comp_Score);
+	}
 	blue.drawMe();
 	for(int i = 0; i < 7; i++) {
 		for(int j = 0; j < 6; j++) {
@@ -258,7 +268,7 @@ void ComputerPlay() {
 	compWin = GameCheck(red_c);
 }
 
-bool spanishFlag = false;
+
 void IntroScreen(void){
 	ST7735_FillScreen(0); //clear screen
 	ST7735_SetCursor(0, 0);
@@ -281,6 +291,7 @@ void IntroScreen(void){
 			ST7735_OutString("SPANISH\n");
 			spanishFlag = true;
 			delay();
+			delay();
 			ST7735_FillScreen(0); //clear screen
 			break;
 		}
@@ -290,13 +301,28 @@ void IntroScreen(void){
 	}
 		if(spanishFlag){
 			ST7735_OutString("CONECTAR CUATRO");
+			ST7735_DrawBitmap(5, 160, IntroScreenPic , 115,115);
 		}
 		else{
+			ST7735_DrawBitmap(5, 160, IntroScreenPic , 115,115);
 			ST7735_OutString("CONNECT FOUR");
 		}
 		delay();
+		delay();
 		ST7735_FillScreen(0); //clear screen
 
+}
+void congratsScreen(void){
+	ST7735_DrawBitmap(5, 160, congrats , 115,115);
+	congratsScreenSong();
+	delay();
+	delay();
+	delay();
+	delay();
+	delay();
+	delay();
+	delay();
+	
 }
 int main(void){
 	
@@ -345,14 +371,24 @@ int main(void){
 		if(playerWin == true) {
 			//ST7735_FillScreen(0);
 			ST7735_SetCursor(0,3);
-			ST7735_OutString("GOOD JOB, YOU WON\n");
+			if(spanishFlag){
+				ST7735_OutString("BUEN TRABAJO,GANASTE!\n");
+			}
+				else{
+			ST7735_OutString("GOOD JOB, YOU WON!\n");}
 			Player_Score++;
 			delay();
 			delay();
+			congratsScreen();
+			
 		} else if(compWin == true) {
 			//ST7735_FillScreen(0);
 			ST7735_SetCursor(0,3);
-			ST7735_OutString("AWW, YOU LOST TO ME\n");
+			if(spanishFlag){
+				ST7735_OutString("AWW,PIERDES A MI!");
+			}
+				else{
+			ST7735_OutString("AWW, YOU LOST TO ME!\n");}
 			Comp_Score++;
 			delay();
 			delay();
