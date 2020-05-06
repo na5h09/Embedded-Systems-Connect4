@@ -155,7 +155,7 @@ uint32_t grid_count;
 uint32_t Player_Score = 0;
 uint32_t Comp_Score = 0;
 void GameInit(){
-	blue.Init(100, 55, blueChip);
+	blue.Init(100, 55, pointer);
 	for(int i = 0; i < 7; i++) {
 		for(int j = 0; j < 6; j++) {
 			Grid[i][j].filled = false;
@@ -324,6 +324,19 @@ void congratsScreen(void){
 	delay();
 	
 }
+
+void ripScreen(void){
+	ST7735_DrawBitmap(0, 190, rip , 120,142);
+	ripScreenSong();
+		delay();
+	delay();
+	delay();
+	delay();
+	delay();
+	delay();
+	delay();
+	
+}
 int main(void){
 	
 	
@@ -377,9 +390,10 @@ int main(void){
 				else{
 			ST7735_OutString("GOOD JOB, YOU WON!\n");}
 			Player_Score++;
-			delay();
-			delay();
 			congratsScreen();
+			delay();
+			delay();
+			
 			
 		} else if(compWin == true) {
 			//ST7735_FillScreen(0);
@@ -389,6 +403,7 @@ int main(void){
 			}
 				else{
 			ST7735_OutString("AWW, YOU LOST TO ME!\n");}
+			ripScreen();
 			Comp_Score++;
 			delay();
 			delay();

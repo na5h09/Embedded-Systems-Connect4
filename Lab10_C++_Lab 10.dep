@@ -1,55 +1,34 @@
 Dependencies for Project 'Lab10_C++', Target 'Lab 10': (DO NOT MODIFY !)
 CompilerVersion: 5060750::V5.06 update 6 (build 750)::ARMCC
 F (.\startup_TM4C123.s)(0x5EB24C4E)(--cpu Cortex-M4 -g --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123--pd "__UVISION_VERSION SETA 529" --pd "_RTE_ SETA 1" --pd "TM4C123GH6PM SETA 1"--list .\startup_tm4c123.lst --xref -o .\startup_tm4c123.o --depend .\startup_tm4c123.d)
-F (.\main.cpp)(0x5EB2605B)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\main.o --omf_browse .\main.crf --depend .\main.d)
+F (.\main.cpp)(0x5EB2CED2)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\main.o --omf_browse .\main.crf --depend .\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
-I (PLL.h)(0x5EB24C4E)
-I (ST7735.h)(0x5EB24C4E)
-I (Random.h)(0x5EB24C4E)
-I (SlidePot.h)(0x5EB24C4E)
-I (Images.h)(0x5EB25810)
-I (UART.h)(0x5EB24C4E)
-I (Timer0.h)(0x5EB24C4E)
-I (Timer1.h)(0x5EB24C4E)
-I (Sound.h)(0x5EB25FDD)
 F (.\DAC.cpp)(0x5EB24C4E)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\dac.o --omf_browse .\dac.crf --depend .\dac.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (DAC.h)(0x5EB24C4E)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 F (.\PLL.cpp)(0x5EB24C4E)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\pll.o --omf_browse .\pll.crf --depend .\pll.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (PLL.h)(0x5EB24C4E)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 F (.\random.cpp)(0x5EB24C4E)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\random.o --omf_browse .\random.crf --depend .\random.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 F (.\ST7735.cpp)(0x5EB24C4E)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\st7735.o --omf_browse .\st7735.crf --depend .\st7735.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (ST7735.h)(0x5EB24C4E)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 F (.\SlidePot.cpp)(0x5EB24C4E)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\slidepot.o --omf_browse .\slidepot.crf --depend .\slidepot.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (SlidePot.h)(0x5EB24C4E)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
-F (.\Sound.cpp)(0x5EB25FAB)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\sound.o --omf_browse .\sound.crf --depend .\sound.d)
+F (.\Sound.cpp)(0x5EB2CDB5)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\sound.o --omf_browse .\sound.crf --depend .\sound.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
-I (Sound.h)(0x5EB25FDD)
+I (Sound.h)(0x5EB2CDB5)
 I (DAC.h)(0x5EB24C4E)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
-I (Timer0.h)(0x5EB24C4E)
 F (.\Timer0.cpp)(0x5EB24C4E)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\timer0.o --omf_browse .\timer0.crf --depend .\timer0.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (Timer0.h)(0x5EB24C4E)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 F (.\Timer1.cpp)(0x5EB24C4E)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\timer1.o --omf_browse .\timer1.crf --depend .\timer1.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (Timer1.h)(0x5EB24C4E)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
 F (.\UART.cpp)(0x5EB24C4E)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\uart.o --omf_browse .\uart.crf --depend .\uart.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
-I (../inc/tm4c123gh6pm.h)(0x5388C2DA)
-I (FIFO.h)(0x5EB24C4E)
-I (UART.h)(0x5EB24C4E)
 F (.\FIFO.cpp)(0x5EB24C4E)(--cpp -c --cpu Cortex-M4 -g -O0 --apcs=interwork -I.\RTE\_Lab_10-IC:\Users\mervi\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\Core\Include-IC:\Users\mervi\AppData\Local\Arm\Packs\Keil\TM4C_DFP\1.1.0\Device\Include\TM4C123-D__UVISION_VERSION="529" -D_RTE_ -DTM4C123GH6PM-o .\fifo.o --omf_browse .\fifo.crf --depend .\fifo.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5D9B96F8)
 I (FIFO.h)(0x5EB24C4E)
