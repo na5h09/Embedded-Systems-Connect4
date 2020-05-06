@@ -270,6 +270,7 @@ void ComputerPlay() {
 
 
 void IntroScreen(void){
+	spanishFlag = false;
 	ST7735_FillScreen(0); //clear screen
 	ST7735_SetCursor(0, 0);
 	ST7735_OutString("ENGLISH PE0 BUTTON\nSPANISH PE1 BUTTON");
@@ -362,7 +363,8 @@ int main(void){
 			while(flag==0){};		//semaphore
 			flag = 0;	
 			if(tokenSelect == true) { //if PE0 was pressed draw game and produce sound
-				tokenSelect = false;
+				Sound_DropToken();
+				while(tokenSelect == true) {}
 				placeToken(blue.getCol(), blue_c, blueChip);
 				delay();
 				//if PE0 was pressed place token in that column and check to see if player won
@@ -371,11 +373,10 @@ int main(void){
 					drawFlag = true;
 				}
 				GameDraw();
-				Sound_DropToken();
 				if(playerWin == false && drawFlag == false){	//if the player does not win disable interrupts while the computer plays its turn
-					DisableInterrupts();
+					//DisableInterrupts();
 					ComputerPlay();
-					EnableInterrupts();
+					//EnableInterrupts();
 				}
 			}
 			GameDraw();							//still continue to draw the game
