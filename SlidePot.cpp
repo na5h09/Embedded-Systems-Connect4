@@ -106,6 +106,12 @@ uint32_t SlidePot::Distance(void){  // return distance value (0 to 2000), 0.001c
 }
 
 uint32_t SlidePot::currentColumn(void){ //added this function so we can know what column we are on
-	return ((distance - 5)/ 17) - 1;
+	uint32_t colnum = ((distance - 6)/ 16);
+	if(colnum < 6) {
+		return colnum;
+	} else {
+		return 6;
+	}
 }
+
 
