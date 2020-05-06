@@ -74,7 +74,8 @@ struct Node{
 	bool filled;
 	uint32_t x;
 	uint32_t y;
-	uint16_t color; //0 is none, 0xCA47 is blue, 0x20FD is red
+	uint16_t color;
+	const unsigned short *coin; //0 is none, 0xCA47 is blue, 0x20FD is red
 };
 typedef struct Node Gridspace;
 Gridspace Grid[7][6];
@@ -150,14 +151,17 @@ bool tokenSelect;
 token blue;
 bool playerWin, compWin, drawFlag;
 uint32_t grid_count;
+uint32_t Player_Score = 0;
+uint32_t Comp_Score = 0;
 void GameInit(){
 	blue.Init(100, 55, blueChip);
 	for(int i = 0; i < 7; i++) {
 		for(int j = 0; j < 6; j++) {
 			Grid[i][j].filled = false;
 			Grid[i][j].color = 0;
-			Grid[i][j].x = (16*i) + 12;
-			Grid[i][j].y = (16*j) + 68;
+			Grid[i][j].coin = 0;
+			Grid[i][j].x = (16*i) + 9;
+			Grid[i][j].y = (16*j) + 75;
 		}
 	}
 	playerWin = false;
@@ -167,24 +171,34 @@ void GameInit(){
 }
 
 void GameDraw() {
+	ST7735_SetCursor(0, 0);
+	ST7735_OutString("Player Score: ");
+	ST7735_OutUDec(Player_Score);
+	ST7735_SetCursor(0, 1);
+	ST7735_OutString("Computer Score: ");
+	ST7735_OutUDec(Comp_Score);
 	blue.drawMe();
 	for(int i = 0; i < 7; i++) {
 		for(int j = 0; j < 6; j++) {
 			if(Grid[i][j].filled == true) {
-				ST7735_FillRect(Grid[i][j].x, Grid[i][j].y, 5, 5, Grid[i][j].color);
+				ST7735_DrawBitmap(Grid[i][j].x, Grid[i][j].y, Grid[i][j].coin, 10, 10);
 			}
 		}
 	}
 }	
 
 
-uint32_t time = 0;
+void delay() {
+	for(int i = 7999999; i > 0; i--) {}
+}
+
 volatile uint32_t flag; //different flag conditions
-void placeToken(uint32_t column, uint16_t tok_color) { //places token in column
+void placeToken(uint32_t column, uint16_t tok_color, const unsigned short *c_coin) { //places token in column
 	for(int i = 5; i >=0; i--) {
 			if(Grid[column][i].filled == false){
 				Grid[column][i].filled = true;
 				Grid[column][i].color = tok_color;
+				Grid[column][i].coin = c_coin;
 				grid_count++;
 				return;
 			}
@@ -240,7 +254,7 @@ void ComputerPlay() {
 	while(Grid[c_col][0].filled == true) {
 		c_col =(Random32()>>24)%7;
 	}
-	placeToken(c_col, red_c);
+	placeToken(c_col, red_c, redChip);
 	compWin = GameCheck(red_c);
 }
 
@@ -257,22 +271,16 @@ void IntroScreen(void){
 		
 		if(PE0){
 			ST7735_FillScreen(0); //clear screen
-			PE0= 7999999;
 		  ST7735_OutString("ENGLISH\n");
-			while(PE0 > 0){
-				PE0--;
-			}
+			delay();
 			ST7735_FillScreen(0); //clear screen
 				break;
 		}
 		if(PE1){
 			ST7735_FillScreen(0); //clear screen
-		  PE1= 7999999;
 			ST7735_OutString("SPANISH\n");
 			spanishFlag = true;
-			while(PE1 > 0){
-				PE1--;
-			}
+			delay();
 			ST7735_FillScreen(0); //clear screen
 			break;
 		}
@@ -280,23 +288,17 @@ void IntroScreen(void){
 		
 		
 	}
-	PE0= 79999999;
 		if(spanishFlag){
 			ST7735_OutString("CONECTAR CUATRO");
 		}
 		else{
 			ST7735_OutString("CONNECT FOUR");
 		}
-		while(PE0 > 0){
-			PE0--;
-			
-		}
+		delay();
 		ST7735_FillScreen(0); //clear screen
 
 }
 int main(void){
-
-	
 	
 	
 	DisableInterrupts();
@@ -322,8 +324,8 @@ int main(void){
 			flag = 0;	
 			if(tokenSelect == true) { //if PE0 was pressed draw game and produce sound
 				tokenSelect = false;
-				placeToken(blue.getCol(), blue_c);
-				for(int i = 7999999; i > 0; i--) {}
+				placeToken(blue.getCol(), blue_c, blueChip);
+				delay();
 				//if PE0 was pressed place token in that column and check to see if player won
 				playerWin = GameCheck(blue_c);
 				if(grid_count == 42 && playerWin == false) {	//if player didn't win and the board is full game is draw
@@ -342,19 +344,24 @@ int main(void){
 		//write function for ending screen
 		if(playerWin == true) {
 			//ST7735_FillScreen(0);
-			ST7735_SetCursor(0,0);
+			ST7735_SetCursor(0,3);
 			ST7735_OutString("GOOD JOB, YOU WON\n");
-			for(int i = 7999999; i >= 0; i--){}
+			Player_Score++;
+			delay();
+			delay();
 		} else if(compWin == true) {
 			//ST7735_FillScreen(0);
-			ST7735_SetCursor(0,0);
+			ST7735_SetCursor(0,3);
 			ST7735_OutString("AWW, YOU LOST TO ME\n");
-			for(int i = 7999999; i >= 0; i--){}
+			Comp_Score++;
+			delay();
+			delay();
 		} else if(drawFlag == true) {
 			//ST7735_FillScreen(0);
-			ST7735_SetCursor(0,0);
+			ST7735_SetCursor(0,3);
 			ST7735_OutString("OHH, IT'S A TIE!\n");
-			for(int i = 7999999; i >= 0; i--){}
+			delay();
+			delay();
 		}
 
   }
@@ -371,5 +378,4 @@ void SysTick_Handler(void){ // every sample
 	
 	
 }
-
 
