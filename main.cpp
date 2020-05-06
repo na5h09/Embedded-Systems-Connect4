@@ -148,22 +148,28 @@ void PortE_Init(void){
 
 bool tokenSelect;
 token blue;
+bool playerWin, compWin, drawFlag;
+uint32_t grid_count;
 void GameInit(){
 	blue.Init(100, 55, blueChip);
-	for(int i = 0; i < 6; i++) {
-		for(int j = 0; j < 5; j++) {
+	for(int i = 0; i < 7; i++) {
+		for(int j = 0; j < 6; j++) {
 			Grid[i][j].filled = false;
 			Grid[i][j].color = 0;
-			Grid[i][j].x = (16*i) + 7;
-			Grid[i][j].y = (16*i) + 61;
+			Grid[i][j].x = (16*i) + 12;
+			Grid[i][j].y = (16*j) + 68;
 		}
 	}
+	playerWin = false;
+	drawFlag = false;
+	compWin = false;
+	grid_count = 0;
 }
 
 void GameDraw() {
 	blue.drawMe();
-	for(int i = 0; i < 6; i++) {
-		for(int j = 0; j < 5; j++) {
+	for(int i = 0; i < 7; i++) {
+		for(int j = 0; j < 6; j++) {
 			if(Grid[i][j].filled == true) {
 				ST7735_FillRect(Grid[i][j].x, Grid[i][j].y, 5, 5, Grid[i][j].color);
 			}
@@ -174,10 +180,6 @@ void GameDraw() {
 
 uint32_t time = 0;
 volatile uint32_t flag; //different flag conditions
-bool playerWin = false;
-bool compWin = false;
-bool drawFlag = false;
-uint32_t grid_count = 0;
 void placeToken(uint32_t column, uint16_t tok_color) { //places token in column
 	for(int i = 5; i >=0; i--) {
 			if(Grid[column][i].filled == false){
@@ -224,8 +226,8 @@ void background(void){
 
 	blue.changeDistance(my.Distance());		//continue to change the distance of player token
 	blue.currentCol(my.currentColumn());	//make sure to add column value
+	tokenSelect = (GPIO_PORTE_DATA_R & 0x01);
 	if(tokenSelect == true) {							//if PE0 was pressed place token in that column and check to see if player won
-		placeToken(blue.getCol(), blue_c);
 		playerWin = GameCheck(blue_c);
 	}
 	if(grid_count == 42 && playerWin == false) {	//if player didn't win and the board is full game is draw
@@ -244,6 +246,8 @@ void ComputerPlay() {
 
 bool spanishFlag = false;
 void IntroScreen(void){
+	ST7735_FillScreen(0); //clear screen
+	ST7735_SetCursor(0, 0);
 	ST7735_OutString("ENGLISH PE0 BUTTON\nSPANISH PE1 BUTTON");
 	int PE0 = 0;
 	int PE1 = 1;
@@ -313,14 +317,21 @@ int main(void){
 		IntroScreen(); //so it can restart once the game is over
 		ST7735_DrawBitmap(5,160,grid,115,100);
 		GameInit();
-		while(playerWin == false || compWin == false || drawFlag == false) { //play while no one has won or drawn
+		while(playerWin == false && compWin == false && drawFlag == false) { //play while no one has won or drawn
 			while(flag==0){};		//semaphore
 			flag = 0;	
 			if(tokenSelect == true) { //if PE0 was pressed draw game and produce sound
+				tokenSelect = false;
+				placeToken(blue.getCol(), blue_c);
+				for(int i = 7999999; i > 0; i--) {}
+				//if PE0 was pressed place token in that column and check to see if player won
+				playerWin = GameCheck(blue_c);
+				if(grid_count == 42 && playerWin == false) {	//if player didn't win and the board is full game is draw
+					drawFlag = true;
+				}
 				GameDraw();
 				Sound_DropToken();
-				if(playerWin == true || drawFlag == true){	//if the player wins or there is a draw continue to ending screen
-				} else {								//otherwise disable interrupts while the computer plays its turn
+				if(playerWin == false && drawFlag == false){	//if the player does not win disable interrupts while the computer plays its turn
 					DisableInterrupts();
 					ComputerPlay();
 					EnableInterrupts();
@@ -329,28 +340,24 @@ int main(void){
 			GameDraw();							//still continue to draw the game
 		}
 		//write function for ending screen
-		playerWin = false;
-		drawFlag = false;
-		compWin = false;
+		if(playerWin == true) {
+			//ST7735_FillScreen(0);
+			ST7735_SetCursor(0,0);
+			ST7735_OutString("GOOD JOB, YOU WON\n");
+			for(int i = 7999999; i >= 0; i--){}
+		} else if(compWin == true) {
+			//ST7735_FillScreen(0);
+			ST7735_SetCursor(0,0);
+			ST7735_OutString("AWW, YOU LOST TO ME\n");
+			for(int i = 7999999; i >= 0; i--){}
+		} else if(drawFlag == true) {
+			//ST7735_FillScreen(0);
+			ST7735_SetCursor(0,0);
+			ST7735_OutString("OHH, IT'S A TIE!\n");
+			for(int i = 7999999; i >= 0; i--){}
+		}
 
   }
-
-  /*ST7735_FillScreen(0x0000);            // set screen to black
-  ST7735_SetCursor(1, 1);
-  ST7735_OutString((char*)"GAME OVER");
-  ST7735_SetCursor(1, 2);
-  ST7735_SetTextColor(ST7735_WHITE);
-  ST7735_OutString((char*)"Nice try,");
-  ST7735_SetCursor(1, 3);
-  ST7735_OutString((char*)"Earthling!");
-  ST7735_SetCursor(2, 4);
-  ST7735_SetTextColor(ST7735_WHITE);
-  while(1){
-    while(flag==0){};
-    flag = 0;
-    ST7735_SetCursor(2, 4);
-    ST7735_OutUDec(time);
-  }*/
 
 }
 
@@ -361,8 +368,8 @@ void SysTick_Handler(void){ // every sample
 // should call ADC_In() and Sensor.Save
   GPIO_PORTF_DATA_R ^= 0x0E;		//toggle LED heartbeat
   my.Save(ADC_In());
-	tokenSelect = (GPIO_PORTE_DATA_R & 0x01);
 	
 	
 }
+
 
